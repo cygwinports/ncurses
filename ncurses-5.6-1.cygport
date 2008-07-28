@@ -1,0 +1,101 @@
+DESCRIPTION="A free software implementation of the SysV4.0 curses terminal-handling library and tools"
+HOMEPAGE="http://www.gnu.org/software/ncurses/ncurses.html"
+SRC_URI="mirror://gnu/ncurses/${PN}-${PV}.tar.gz"
+PATCH_URI="
+	ftp://invisible-island.net/${PN}/${PV}/${P}-coverity.patch.gz
+	mirror://portage/sys-libs/${PN}/files/${P}-build.patch
+	5.6-cxx.patch
+	5.6-no-undefined.patch
+	5.6-strendzap.patch
+	5.6-ncr260vt300wpp.patch
+"
+
+PKG_NAMES="${PN} lib${PN}8 lib${PN}-devel ${PN}-demo terminfo"
+PKG_HINTS="setup lib${PN}8 lib${PN}-devel ${PN}-demo terminfo"
+PKG_CONTENTS[0]="--exclude=usr/bin/*.dll usr/bin usr/share/doc/${PN}-${PV} usr/share/doc/Cygwin usr/share/man/man1 usr/share/man/man5 usr/share/man/man7"
+PKG_CONTENTS[1]='usr/bin/*.dll'
+PKG_CONTENTS[2]='--exclude=usr/lib/ncurses usr/lib usr/include etc usr/share/man/man3'
+PKG_CONTENTS[3]='usr/lib/ncurses'
+PKG_CONTENTS[4]='usr/share/terminfo usr/share/tabset'
+
+src_compile() {
+	# No autoreconf:
+	#  (1) ncurses does not ship with an acinclude.m4, nor with any
+	#      of the m4 files used to generate aclocal (the .m4 files
+	#      under Ada95/gen/ are for a different purpse).  So, we can't
+	#      regenerate aclocal.m4 using aclocal
+	#  (2) upstream maintainer uses a forked version of autoconf-2.13
+	#      so we can't regenerate configure using our autoconf
+	#  (3) ncurses does not use automake
+	#  (4) ncurses uses libtool -- but only as an installed tool
+	#      It does NOT build its own libtool
+	#  (5) ncurses does not use gettext
+	# So really, there's no point in trying to autoreconf.
+
+	common_args="
+		--enable-symlinks --enable-sigwinch --enable-colorfgbg
+		--enable-tcap-names --disable-termcap --enable-broken-linker
+		--enable-echo
+		--with-shared --with-normal --with-abi-version=8 --with-libtool
+		--with-manpage-symlinks --with-install-prefix=${D}
+		--with-default-terminfo-dir=/usr/share/terminfo
+		--without-debug --without-ada
+	"
+
+	CYGCONF_SOURCE=${S}
+
+	mkdir -p ${B}/narrowc
+	cd ${B}/narrowc
+	cygconf ${common_args} --includedir=/usr/include/ncurses
+	cygmake -j1 sources
+	cygmake
+
+	mkdir -p ${B}/widec
+	cd ${B}/widec
+	cygconf ${common_args} --includedir=/usr/include/ncursesw --enable-widec
+	cygmake -j1 sources
+	cygmake
+}
+
+ncurses_inst_examples() {
+	cd ${B}/widec
+	exeinto /usr/lib/ncurses/test
+	doexe test/.libs/*.exe
+	doexe c++/.libs/demo.exe
+}
+
+ncurses_fix_la() {
+	cd ${D}/usr/lib
+	for fn in *.la
+	do
+		nfn=${fn%%.la}.lai
+    		cat ${fn} | sed -e "s;${D}/usr/lib;/usr/lib;g" -e "s;${B}/lib;/usr/lib;g" > ${nfn}
+		mv ${nfn} ${fn}
+  	done
+}
+
+src_install() {
+	terminfodir=/usr/share/terminfo
+	includedir=/usr/include/ncurses
+
+	cd ${B}/narrowc
+	cyginstall INSTALL=install
+	cd ${B}/widec
+	cyginstall INSTALL=install
+
+	(cd ${D}/usr/bin ; chmod +x *.dll)
+
+	DOCS="${C}/CHANGES ${S}/doc/TO-DO"
+	HTMLDOCS="${S}/doc/html/*.html"
+
+	ncurses_inst_examples
+	for fn in ${includedir}/ncurses.h /usr/lib/terminfo \
+		/usr/lib/libcurses.a /usr/lib/libcurses.dll.a
+	do
+		if [ -e ${D}${fn} ]
+		then
+			rm -f ${D}${fn}
+		fi
+	done
+	ncurses_fix_la
+}
