@@ -1,0 +1,143 @@
+NAME="ncurses"
+VERSION=5.9
+RELEASE=1
+CATEGORY="Libs"
+SUMMARY="Curses library"
+DESCRIPTION="Ncurses (new curses) started as a freely distributable clone of
+SVr4 curses. It has outgrown the clone description, and now contains many
+features which are not in SVr4 curses. Curses is a pun on the term <<cursor
+optimization>>. It is a library of functions that manage an application's
+display on character-cell terminals (e.g., VT100)."
+HOMEPAGE="http://invisible-island.net/ncurses/"
+SRC_URI="ftp://invisible-island.net/ncurses/ncurses-${VERSION}.tar.gz"
+SRC_DIR="ncurses-${VERSION}"
+PATCH_URI="
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120616-patch.sh.bz2
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120622.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120630.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120707.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120714.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120721.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120728.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120804.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120811.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120825.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120826.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120901.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120902.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120903.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120908.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120922.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20121006.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20121013.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20121017.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20121026.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20121102.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20121110.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20121117.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20121124.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20121201.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20121208.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20121215.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20121222.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20121229.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20130105.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20130112.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20130119.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20130126.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20130202.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20130209.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20130216.patch.gz
+	5.7-t-suffix.patch
+	5.9-abi-version.patch
+"
+
+PKG_NAMES="ncurses ncurses-demo ncursesw-demo libncurses10 libncurses-devel
+           libncursesw10 libncursesw-devel terminfo"
+ncurses_CONTENTS="--exclude=*.dll --exclude=*-config* usr/bin/ usr/share/doc/ usr/share/man/man[157]/"
+ncurses_demo_CONTENTS="usr/lib/ncurses/test/"
+ncursesw_demo_CONTENTS="usr/lib/ncursesw/test/"
+libncurses10_CONTENTS="--exclude=*w-* usr/bin/*-10.dll"
+libncurses_devel_CONTENTS="usr/bin/ncurses5-config usr/include/ncurses/ usr/include/*.h
+	usr/lib/lib*[^lw].a usr/lib/libpanel.a usr/lib/lib*[^w].dll.a
+	usr/lib/pkgconfig/*[^w].pc usr/share/man/man1/ncurses5-config.* usr/share/man/man3/"
+libncursesw10_CONTENTS="usr/bin/*w-10.dll"
+libncursesw_devel_CONTENTS="usr/bin/ncursesw5-config usr/include/ncursesw/
+	usr/lib/lib*w.* usr/lib/pkgconfig/*w.pc usr/share/man/man1/ncursesw5-config.*"
+terminfo_CONTENTS="usr/*/terminfo/ usr/share/tabset/"
+
+src_compile() {
+	cd ${B}
+	mkdir -p build-narrowc
+	pushd build-narrowc
+	cygconf --with-libtool=/usr/bin/${CHOST}-libtool \
+		--includedir=/usr/include/ncurses \
+		--with-pkg-config-libdir=/usr/lib/pkgconfig \
+		--with-install-prefix=${D} \
+		--without-debug --disable-relink --disable-rpath \
+		--with-ticlib --without-termlib \
+		--enable-ext-mouse --enable-sp-funcs --enable-reentrant \
+		--with-abi-version=10 --with-wrap-prefix=ncwrap_ \
+		--enable-sigwinch --enable-colorfgbg --enable-tcap-names \
+		--disable-termcap --disable-mixed-case --enable-symlinks \
+		--with-pkg-config --enable-pc-files \
+		--with-manpage-format=normal --with-manpage-aliases \
+		--with-default-terminfo-dir=/usr/share/terminfo \
+		--enable-echo
+
+	sed -i -e 's%^\(LIBRARIES[ \t]*=\).*$%\1 ../lib/libncurses.la ../lib/libtic.la%' ncurses/Makefile
+	make
+	popd
+
+	mkdir -p build-widec
+	pushd build-widec
+	cygconf --with-libtool=/usr/bin/${CHOST}-libtool \
+		--with-build-cflags=-D_XOPEN_SOURCE_EXTENDED \
+		--includedir=/usr/include/ncursesw \
+		--with-pkg-config-libdir=/usr/lib/pkgconfig \
+		--with-install-prefix=${D} \
+		--without-debug --disable-relink --disable-rpath \
+		--with-ticlib --without-termlib --enable-widec --enable-ext-colors \
+		--enable-ext-mouse --enable-sp-funcs --enable-reentrant \
+		--with-abi-version=10 --with-wrap-prefix=ncwrap_ \
+		--enable-sigwinch --enable-colorfgbg --enable-tcap-names \
+		--disable-termcap --disable-mixed-case --enable-symlinks \
+		--with-pkg-config --enable-pc-files \
+		--with-manpage-format=normal --with-manpage-aliases \
+		--with-default-terminfo-dir=/usr/share/terminfo \
+		--enable-echo
+
+	sed -i -e 's%^\(LIBRARIES[ \t]*=\).*$%\1 ../lib/libncursesw.la ../lib/libticw.la%' ncurses/Makefile
+	make
+	popd
+}
+
+src_install() {
+	cd ${B}
+	pushd build-narrowc
+	cyginstall transform=s,x,x,
+	exeinto /usr/lib/ncurses/test
+	doexe test/*.exe
+	popd
+
+	pushd build-widec
+	cyginstall transform=s,x,x,
+	exeinto /usr/lib/ncursesw/test
+	doexe test/*.exe
+	popd
+
+	dosym ncurses/curses.h /usr/include/ncurses.h
+	dosym ncurses/term.h /usr/include/term.h
+
+	pushd ${D}/usr/bin
+	mv ncurses10-config ncurses5-config
+	mv ncursesw10-config ncursesw5-config
+	sed -i -e 's|echo "10"|echo "6"|' ncurses*5-config
+	popd
+	pushd ${D}/usr/share/man/man1
+	mv ncurses10-config.1 ncurses5-config.1
+	mv ncursesw10-config.1 ncursesw5-config.1
+	popd
+}
+
+KEEP_LA_FILES="none"

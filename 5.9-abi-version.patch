@@ -1,0 +1,33 @@
+--- origsrc/ncurses-5.9/c++/Makefile.in	2013-02-17 22:26:00.258182300 -0600
++++ src/ncurses-5.9/c++/Makefile.in	2013-02-17 23:02:34.417681000 -0600
+@@ -170,7 +170,7 @@ LIB_OBJS = \
+ 	cd ../lib && $(LIBTOOL_LINK) $(CXX) $(CXXFLAGS) \
+ 		-o $(LIBNAME) $(LIB_OBJS:$o=.lo) \
+ 		-rpath $(INSTALL_PREFIX)$(libdir) \
+-		$(LIBTOOL_VERSION) $(NCURSES_MAJOR):$(NCURSES_MINOR) $(LT_UNDEF) $(LDFLAGS_LIBTOOL) $(SHLIB_LIST)
++		$(LIBTOOL_VERSION) $(ABI_VERSION):0 $(LT_UNDEF) $(LDFLAGS_LIBTOOL) $(SHLIB_LIST)
+ 
+ OBJS_DEMO = $(MODEL)/demo$o
+ 
+--- origsrc/ncurses-5.9/configure	2013-02-17 22:26:26.120661500 -0600
++++ src/ncurses-5.9/configure	2013-02-17 23:04:01.218645700 -0600
+@@ -4372,7 +4372,7 @@ fi
+ echo "$as_me: error: Cannot find libtool" >&2;}
+    { (exit 1); exit 1; }; }
+ 	fi
+-	LIB_CREATE='${LIBTOOL} --mode=link ${CC} -rpath ${DESTDIR}${libdir} ${LIBTOOL_VERSION} `cut -f1 ${srcdir}/VERSION` ${LIBTOOL_OPTS} ${LT_UNDEF} $(LIBS) -o'
++	LIB_CREATE='${LIBTOOL} --mode=link ${CC} -rpath ${DESTDIR}${libdir} ${LIBTOOL_VERSION} ${ABI_VERSION}:0 ${LIBTOOL_OPTS} ${LT_UNDEF} $(LIBS) -o'
+ 	LIB_OBJECT='${OBJECTS:.o=.lo}'
+ 	LIB_SUFFIX=.la
+ 	LIB_CLEAN='${LIBTOOL} --mode=clean'
+--- origsrc/ncurses-5.9/mk-1st.awk	2013-02-17 22:26:00.994224400 -0600
++++ src/ncurses-5.9/mk-1st.awk	2013-02-17 23:06:08.148905700 -0600
+@@ -409,7 +409,7 @@ END	{
+ 				} else {
+ 					which_list = "SHLIB_LIST";
+ 				}
+-				printf "\tcd ../lib && $(LIBTOOL_LINK) $(%s) -o %s $(%s_OBJS:$o=.lo) -rpath $(DESTDIR)$(libdir) %s $(NCURSES_MAJOR):$(NCURSES_MINOR) $(LT_UNDEF) $(%s) $(LDFLAGS)\n", compile, lib_name, OBJS, libtool_version, which_list
++				printf "\tcd ../lib && $(LIBTOOL_LINK) $(%s) -o %s $(%s_OBJS:$o=.lo) -rpath $(DESTDIR)$(libdir) %s $(ABI_VERSION):0 $(LT_UNDEF) $(%s) $(LDFLAGS)\n", compile, lib_name, OBJS, libtool_version, which_list
+ 				print  ""
+ 				print  "install \\"
+ 				print  "install.libs \\"
