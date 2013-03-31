@@ -1,6 +1,6 @@
 NAME="ncurses"
 VERSION=5.9
-RELEASE=1
+RELEASE=3
 CATEGORY="Libs"
 SUMMARY="Curses library"
 DESCRIPTION="Ncurses (new curses) started as a freely distributable clone of
@@ -48,30 +48,37 @@ PATCH_URI="
 	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20130202.patch.gz
 	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20130209.patch.gz
 	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20130216.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20130218.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20130302.patch.gz
 	5.7-t-suffix.patch
 	5.9-abi-version.patch
 "
 
-PKG_NAMES="ncurses ncurses-demo ncursesw-demo libncurses10 libncurses-devel
-           libncursesw10 libncursesw-devel terminfo"
+PKG_NAMES="ncurses ncursesw-demo libncursesw10 libncursesw-devel terminfo"
 ncurses_CONTENTS="--exclude=*.dll --exclude=*-config* usr/bin/ usr/share/doc/ usr/share/man/man[157]/"
-ncurses_demo_CONTENTS="usr/lib/ncurses/test/"
 ncursesw_demo_CONTENTS="usr/lib/ncursesw/test/"
-libncurses10_CONTENTS="--exclude=*w-* usr/bin/*-10.dll"
-libncurses_devel_CONTENTS="usr/bin/ncurses5-config usr/include/ncurses/ usr/include/*.h
-	usr/lib/lib*[^lw].a usr/lib/libpanel.a usr/lib/lib*[^w].dll.a
-	usr/lib/pkgconfig/*[^w].pc usr/share/man/man1/ncurses5-config.* usr/share/man/man3/"
+libncursesw10_REQUIRES="terminfo"
 libncursesw10_CONTENTS="usr/bin/*w-10.dll"
-libncursesw_devel_CONTENTS="usr/bin/ncursesw5-config usr/include/ncursesw/
-	usr/lib/lib*w.* usr/lib/pkgconfig/*w.pc usr/share/man/man1/ncursesw5-config.*"
+libncursesw_devel_CONTENTS="usr/bin/ncurses*5-config usr/include/ usr/lib/lib*
+	usr/lib/pkgconfig/ usr/share/man/man1/ncurses*5-config.* usr/share/man/man3/"
 terminfo_CONTENTS="usr/*/terminfo/ usr/share/tabset/"
+
+if defined ARCH_i686; then
+PKG_NAMES+=" libncurses10 libncurses-devel"
+libncurses10_REQUIRES="terminfo"
+libncurses10_CONTENTS="--exclude=*w-* usr/bin/*-10.dll"
+libncurses_devel_CATEGORY="_obsolete"
+libncurses_devel_REQUIRES="libncursesw-devel"
+fi
 
 src_compile() {
 	cd ${B}
+
+	if defined ARCH_i686; then
+
 	mkdir -p build-narrowc
 	pushd build-narrowc
 	cygconf --with-libtool=/usr/bin/${CHOST}-libtool \
-		--includedir=/usr/include/ncurses \
 		--with-pkg-config-libdir=/usr/lib/pkgconfig \
 		--with-install-prefix=${D} \
 		--without-debug --disable-relink --disable-rpath \
@@ -89,11 +96,12 @@ src_compile() {
 	make
 	popd
 
+	fi  # ARCH_i686
+
 	mkdir -p build-widec
 	pushd build-widec
-	cygconf --with-libtool=/usr/bin/${CHOST}-libtool \
+	cygconf --with-libtool=/usr/bin/$(cross_compiling && echo -n ${ARCH}-pc-cygwin-)libtool \
 		--with-build-cflags=-D_XOPEN_SOURCE_EXTENDED \
-		--includedir=/usr/include/ncursesw \
 		--with-pkg-config-libdir=/usr/lib/pkgconfig \
 		--with-install-prefix=${D} \
 		--without-debug --disable-relink --disable-rpath \
@@ -114,29 +122,50 @@ src_compile() {
 
 src_install() {
 	cd ${B}
+	if defined ARCH_i686; then
 	pushd build-narrowc
-	cyginstall transform=s,x,x,
-	exeinto /usr/lib/ncurses/test
-	doexe test/*.exe
+	cygmake install.libs DESTDIR=${D}
+	rm -fr ${D}/usr/bin/*-config ${D}/usr/include/ ${D}/usr/lib/
 	popd
+	fi  # ARCH_i686
 
 	pushd build-widec
-	cyginstall transform=s,x,x,
+	cyginstall
 	exeinto /usr/lib/ncursesw/test
 	doexe test/*.exe
 	popd
 
-	dosym ncurses/curses.h /usr/include/ncurses.h
-	dosym ncurses/term.h /usr/include/term.h
+	dodir /usr/include/ncurses{,w}
+	pushd ${D}/usr/include/ncurses
+	ln -s ../*.h .
+	popd
+	pushd ${D}/usr/include/ncursesw
+	ln -s ../*.h .
+	popd
+
+	pushd ${D}/usr/lib
+	for l in lib*.a
+	do
+		ln -s ${l} ${l/w/}
+	done
+	dosym libncursesw.a /usr/lib/libcurses.a
+	dosym libncursesw.dll.a /usr/lib/libcurses.dll.a
+	popd
+
+	pushd ${D}/usr/lib/pkgconfig
+	for f in *.pc
+	do
+		ln -s ${f} ${f/w/}
+	done
 
 	pushd ${D}/usr/bin
-	mv ncurses10-config ncurses5-config
 	mv ncursesw10-config ncursesw5-config
 	sed -i -e 's|echo "10"|echo "6"|' ncurses*5-config
+	dosym ncursesw5-config /usr/bin/ncurses5-config
 	popd
 	pushd ${D}/usr/share/man/man1
-	mv ncurses10-config.1 ncurses5-config.1
 	mv ncursesw10-config.1 ncursesw5-config.1
+	dosym ncursesw5-config.1 /usr/share/man/man1/ncurses5-config.1
 	popd
 }
 
