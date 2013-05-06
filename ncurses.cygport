@@ -1,6 +1,6 @@
 NAME="ncurses"
 VERSION=5.9
-RELEASE=3
+RELEASE=4
 CATEGORY="Libs"
 SUMMARY="Curses library"
 DESCRIPTION="Ncurses (new curses) started as a freely distributable clone of
@@ -12,44 +12,7 @@ HOMEPAGE="http://invisible-island.net/ncurses/"
 SRC_URI="ftp://invisible-island.net/ncurses/ncurses-${VERSION}.tar.gz"
 SRC_DIR="ncurses-${VERSION}"
 PATCH_URI="
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120616-patch.sh.bz2
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120622.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120630.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120707.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120714.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120721.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120728.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120804.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120811.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120825.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120826.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120901.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120902.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120903.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120908.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20120922.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20121006.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20121013.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20121017.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20121026.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20121102.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20121110.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20121117.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20121124.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20121201.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20121208.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20121215.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20121222.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20121229.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20130105.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20130112.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20130119.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20130126.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20130202.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20130209.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20130216.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20130218.patch.gz
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20130302.patch.gz
+	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20130504-patch.sh.bz2
 	5.7-t-suffix.patch
 	5.9-abi-version.patch
 "
