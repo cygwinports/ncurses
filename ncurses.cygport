@@ -1,37 +1,54 @@
 NAME="ncurses"
-VERSION=5.9
-RELEASE=4
+VERSION=5.9-20140524
+RELEASE=1
 CATEGORY="Libs"
-SUMMARY="Curses library"
+SUMMARY="Terminal display library"
 DESCRIPTION="Ncurses (new curses) started as a freely distributable clone of
 SVr4 curses. It has outgrown the clone description, and now contains many
 features which are not in SVr4 curses. Curses is a pun on the term <<cursor
 optimization>>. It is a library of functions that manage an application's
 display on character-cell terminals (e.g., VT100)."
 HOMEPAGE="http://invisible-island.net/ncurses/"
-SRC_URI="ftp://invisible-island.net/ncurses/ncurses-${VERSION}.tar.gz"
+SRC_URI="ftp://invisible-island.net/ncurses/current/ncurses-${VERSION}.tgz"
 SRC_DIR="ncurses-${VERSION}"
 PATCH_URI="
-	ftp://invisible-island.net/ncurses/${VERSION}/ncurses-${VERSION}-20130504-patch.sh.bz2
-	5.7-t-suffix.patch
 	5.9-abi-version.patch
 "
 
-PKG_NAMES="ncurses ncursesw-demo libncursesw10 libncursesw-devel terminfo"
-ncurses_CONTENTS="--exclude=*.dll --exclude=*-config* usr/bin/ usr/share/doc/ usr/share/man/man[157]/"
-ncursesw_demo_CONTENTS="usr/lib/ncursesw/test/"
+PKG_NAMES="ncurses ncurses-demo libncursesw10 libncurses-devel terminfo terminfo-extra"
+ncurses_CATEGORY="Utils"
+ncurses_SUMMARY=${SUMMARY/library/utilities}
+ncurses_OBSOLETES="ncursesw"
+ncurses_CONTENTS="--exclude=*.dll --exclude=*-config* usr/bin/ usr/share/doc/ usr/share/man/man1/"
+ncurses_demo_CATEGORY="Utils"
+ncurses_demo_SUMMARY=${SUMMARY/library/demos}
+ncurses_demo_OBSOLETES="ncursesw-demo"
+ncurses_demo_CONTENTS="usr/lib/ncurses/test/"
 libncursesw10_REQUIRES="terminfo"
 libncursesw10_CONTENTS="usr/bin/*w-10.dll"
-libncursesw_devel_CONTENTS="usr/bin/ncurses*5-config usr/include/ usr/lib/lib*
+libncurses_devel_OBSOLETES="libncursesw-devel"
+libncurses_devel_CONTENTS="usr/bin/ncurses*5-config usr/include/ usr/lib/lib*
 	usr/lib/pkgconfig/ usr/share/man/man1/ncurses*5-config.* usr/share/man/man3/"
-terminfo_CONTENTS="usr/*/terminfo/ usr/share/tabset/"
+terminfo_CATEGORY="Base"
+terminfo_SUMMARY="Terminal capability database"
+terminfo_CONTENTS="usr/lib/terminfo usr/share/man/man[57]/ usr/share/tabset/"
+for term in ansi dumb linux vt100 vt100-nav vt102 vt220 vt52 \
+    Eterm\* aterm bterm cons25 cygwin eterm\* gnome gnome-256color hurd jfbterm \
+    konsole konsole-256color mach\* mlterm mrxvt nsterm putty\* pcansi \
+    rxvt{,-\*} screen{,-\*color,.\*} st{,-\*} sun teraterm teraterm2.3 \
+    vte vte-256color vwmterm wsvt25\* xfce xterm xterm-\*
+do
+	terminfo_CONTENTS+=" usr/share/terminfo/*/$term"
+	terminfo_extra_CONTENTS+=" --exclude=$term"
+done
+terminfo_extra_SUMMARY="${terminfo_SUMMARY} (additional entries)"
+terminfo_extra_REQUIRES="terminfo"
+terminfo_extra_CONTENTS+=" usr/share/terminfo/"
 
 if defined ARCH_i686; then
-PKG_NAMES+=" libncurses10 libncurses-devel"
+PKG_NAMES+=" libncurses10"
 libncurses10_REQUIRES="terminfo"
 libncurses10_CONTENTS="--exclude=*w-* usr/bin/*-10.dll"
-libncurses_devel_CATEGORY="_obsolete"
-libncurses_devel_REQUIRES="libncursesw-devel"
 fi
 
 src_compile() {
@@ -41,7 +58,7 @@ src_compile() {
 
 	mkdir -p build-narrowc
 	pushd build-narrowc
-	cygconf --with-libtool=/usr/bin/${CHOST}-libtool \
+	cygconf --with-libtool=/usr/bin/$(cross_compiling && echo -n ${ARCH}-pc-cygwin-)libtool \
 		--with-pkg-config-libdir=/usr/lib/pkgconfig \
 		--with-install-prefix=${D} \
 		--without-debug --disable-relink --disable-rpath \
@@ -93,10 +110,17 @@ src_install() {
 	fi  # ARCH_i686
 
 	pushd build-widec
+
 	cyginstall
-	exeinto /usr/lib/ncursesw/test
+
+	exeinto /usr/lib/ncurses/test
 	doexe test/*.exe
-	popd
+
+	# termcap
+#	dodir /etc
+#	./progs/tic -C -t -r ${S}/misc/terminfo.src > ${D}/etc/termcap
+
+	popd # build-widec
 
 	dodir /usr/include/ncurses{,w}
 	pushd ${D}/usr/include/ncurses
@@ -107,7 +131,7 @@ src_install() {
 	popd
 
 	pushd ${D}/usr/lib
-	for l in lib*.a
+	for l in lib*a
 	do
 		ln -s ${l} ${l/w/}
 	done
@@ -131,5 +155,3 @@ src_install() {
 	dosym ncursesw5-config.1 /usr/share/man/man1/ncurses5-config.1
 	popd
 }
-
-KEEP_LA_FILES="none"
