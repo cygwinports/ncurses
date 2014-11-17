@@ -131,6 +131,7 @@ src_install() {
 	popd
 
 	pushd ${D}/usr/lib
+	sed -i -e "s| -L[^ '\"]*| |g;s|${D}||g" *.la
 	for l in lib*a
 	do
 		ln -s ${l} ${l/w/}
