@@ -1,5 +1,5 @@
 NAME="ncurses"
-VERSION=5.9-20141213
+VERSION=5.9-20141227
 RELEASE=1
 CATEGORY="Libs"
 SUMMARY="Terminal display library"
