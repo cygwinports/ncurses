@@ -29,7 +29,7 @@ PATCH_URI+="
 "
 
 PKG_NAMES="ncurses ncurses-demo libncursesw10 libncurses-devel terminfo terminfo-extra"
-ncurses_CATEGORY="Utils"
+ncurses_CATEGORY="Base"
 ncurses_SUMMARY=${SUMMARY/library/utilities}
 ncurses_OBSOLETES="ncursesw"
 ncurses_CONTENTS="--exclude=*.dll --exclude=*-config* usr/bin/ usr/share/doc/ usr/share/man/man1/"
