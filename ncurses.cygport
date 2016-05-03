@@ -1,6 +1,6 @@
 NAME="ncurses"
 VERSION=6.0
-RELEASE=4.20160305
+RELEASE=5.20160423
 CATEGORY="Libs"
 SUMMARY="Terminal display library"
 DESCRIPTION="Ncurses (new curses) started as a freely distributable clone of
@@ -9,20 +9,8 @@ features which are not in SVr4 curses. Curses is a pun on the term <<cursor
 optimization>>. It is a library of functions that manage an application's
 display on character-cell terminals (e.g., VT100)."
 HOMEPAGE="http://invisible-island.net/ncurses/"
-SRC_URI="ftp://invisible-island.net/ncurses/ncurses-${VERSION}.tar.gz"
-SRC_DIR="ncurses-${VERSION}"
-for p in 20150810 20150815 20150822 \
-	 20150905 20150912 20150919 20150926 \
-	 20151010 20151017 20151024 \
-	 20151101 20151107 20151121 20151128 \
-	 20151205 20151212 20151219 20151226 \
-	 20160102 20160116 20160123 20160130 \
-	 20160206 20160213 20160220 \
-	 20160305
-do
-PATCH_URI+=" ftp://invisible-island.net/pub/ncurses/${VERSION}/ncurses-${VERSION}-$p.patch.gz"
-done
-unset p
+SRC_URI="ftp://invisible-island.net/ncurses/current/ncurses-${VERSION}-${RELEASE#*.}.tgz"
+SRC_DIR="ncurses-${VERSION}-${RELEASE#*.}"
 PATCH_URI+="
 	http://pkgs.fedoraproject.org/cgit/ncurses.git/plain/ncurses-config.patch
 	http://pkgs.fedoraproject.org/cgit/ncurses.git/plain/ncurses-urxvt.patch
