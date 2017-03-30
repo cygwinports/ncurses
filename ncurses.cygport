@@ -1,6 +1,6 @@
 NAME="ncurses"
 VERSION=6.0
-RELEASE=9.20170121
+RELEASE=10.20170325
 CATEGORY="Libs"
 SUMMARY="Terminal display library"
 DESCRIPTION="Ncurses (new curses) started as a freely distributable clone of
@@ -14,6 +14,7 @@ SRC_DIR="ncurses-${VERSION}-${RELEASE#*.}"
 PATCH_URI+="
 	http://pkgs.fedoraproject.org/cgit/ncurses.git/plain/ncurses-config.patch
 	http://pkgs.fedoraproject.org/cgit/ncurses.git/plain/ncurses-urxvt.patch
+	http://pkgs.fedoraproject.org/cgit/ncurses.git/plain/ncurses-kbs.patch
 	6.0-abi-version.patch
 "
 
