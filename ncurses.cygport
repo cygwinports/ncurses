@@ -1,6 +1,6 @@
 NAME="ncurses"
 VERSION=6.0
-RELEASE=10.20170325
+RELEASE=11.20170617
 CATEGORY="Libs"
 SUMMARY="Terminal display library"
 DESCRIPTION="Ncurses (new curses) started as a freely distributable clone of
