@@ -1,6 +1,6 @@
 NAME="ncurses"
-VERSION=6.0
-RELEASE=12.20171125
+VERSION=6.1
+RELEASE=1.20190727
 CATEGORY="Libs"
 SUMMARY="Terminal display library"
 DESCRIPTION="Ncurses (new curses) started as a freely distributable clone of
@@ -12,9 +12,9 @@ HOMEPAGE="http://invisible-island.net/ncurses/"
 SRC_URI="ftp://ftp.invisible-island.net/ncurses/current/ncurses-${VERSION}-${RELEASE#*.}.tgz"
 SRC_DIR="ncurses-${VERSION}-${RELEASE#*.}"
 PATCH_URI+="
-	http://pkgs.fedoraproject.org/cgit/ncurses.git/plain/ncurses-config.patch
-	http://pkgs.fedoraproject.org/cgit/ncurses.git/plain/ncurses-urxvt.patch
-	http://pkgs.fedoraproject.org/cgit/ncurses.git/plain/ncurses-kbs.patch
+	https://src.fedoraproject.org/rpms/ncurses/raw/master/f/ncurses-config.patch
+	https://src.fedoraproject.org/rpms/ncurses/raw/master/f/ncurses-urxvt.patch
+	https://src.fedoraproject.org/rpms/ncurses/raw/master/f/ncurses-kbs.patch
 	6.0-abi-version.patch
 "
 
